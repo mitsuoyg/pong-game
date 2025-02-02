@@ -33,6 +33,7 @@ const PongGame: React.FC = () => {
   const [scoreScale, setScoreScale] = useState(1);
 
   // Game constants
+  const PADDLE_SPEED = 0.5;
   const TABLE_SIZE = { x: 40, y: 2, z: 30 };
   const PADDLE_SIZE = { x: 1, y: 1, z: 7 };
   const BALL_SIZE = 0.5;
@@ -55,8 +56,10 @@ const PongGame: React.FC = () => {
       TABLE_SIZE.z / 2 - PADDLE_SIZE.z / 2
     );
 
-    paddle2Ref.current.position.z +=
-      (targetZ - paddle2Ref.current.position.z) * aiSpeed;
+    paddle2Ref.current.position.z += Math.min(
+      (targetZ - paddle2Ref.current.position.z) * aiSpeed,
+      PADDLE_SPEED
+    );
   }, [isTwoPlayer, aiDifficulty]);
 
   // Add these animations in updateGame
@@ -177,15 +180,14 @@ const PongGame: React.FC = () => {
     }
 
     // Paddle movement
-    const paddleSpeed = 0.5;
     [paddle1Ref, paddle2Ref].forEach((paddleRef, index) => {
       if (!paddleRef.current) return;
       const isPlayer1 = index === 0;
       const upKey = isPlayer1 ? 'w' : 'ArrowUp';
       const downKey = isPlayer1 ? 's' : 'ArrowDown';
 
-      if (keys[upKey]) paddleRef.current.position.z -= paddleSpeed;
-      if (keys[downKey]) paddleRef.current.position.z += paddleSpeed;
+      if (keys[upKey]) paddleRef.current.position.z -= PADDLE_SPEED;
+      if (keys[downKey]) paddleRef.current.position.z += PADDLE_SPEED;
 
       paddleRef.current.position.z = Math.max(
         -TABLE_SIZE.z / 2 + PADDLE_SIZE.z / 2,
