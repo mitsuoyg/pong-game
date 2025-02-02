@@ -41,9 +41,9 @@ const PongGame: React.FC = () => {
   const PADDLE_SIZE = { x: 1, y: 1, z: 7 };
   const BALL_SIZE = 0.5;
   const AI_DIFFICULTY = {
-    // easy: { speed: 0.2, prediction: 0.1 },
+    easy: { speed: 0.2, prediction: 0.1 },
     medium: { speed: 0.6, prediction: 0.3 },
-    // hard: { speed: 1.0, prediction: 0.5 },
+    hard: { speed: 1.0, prediction: 0.5 },
   };
 
   // Save isTwoPlayer to localStorage on change
@@ -345,9 +345,9 @@ const PongGame: React.FC = () => {
               }
               disabled={isTwoPlayer}
             >
-              <option value="easy">Easy</option>
+              {/* <option value="easy">Easy</option> */}
               <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
+              {/* <option value="hard">Hard</option> */}
             </select>
             <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
