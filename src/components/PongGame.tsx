@@ -16,18 +16,55 @@ interface BallRef extends THREE.Mesh {
 const PongGame: React.FC = () => {
   const [score1, setScore1] = useState<number>(0);
   const [score2, setScore2] = useState<number>(0);
-  const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(true);
   const [keys, setKeys] = useState<{ [key: string]: boolean }>({});
+  const [isTwoPlayer, setIsTwoPlayer] = useState(true);
+  const [aiDifficulty, setAIDifficulty] =
+    useState<keyof typeof AI_DIFFICULTY>('medium');
   const paddle1Ref = useRef<PaddleRef>(null);
   const paddle2Ref = useRef<PaddleRef>(null);
   const ballRef = useRef<BallRef>(null);
   const ballVelocity = useRef<THREE.Vector3>(new THREE.Vector3(0.15, 0, 0.15));
   const audioContextRef = useRef<AudioContext | null>(null);
 
+  // Animation States
+  const [paddle1Scale, setPaddle1Scale] = useState(1);
+  const [paddle2Scale, setPaddle2Scale] = useState(1);
+  const [scoreScale, setScoreScale] = useState(1);
+
   // Game constants
   const TABLE_SIZE = { x: 40, y: 2, z: 30 };
   const PADDLE_SIZE = { x: 1, y: 1, z: 7 };
   const BALL_SIZE = 0.5;
+  const AI_DIFFICULTY = {
+    easy: { speed: 0.2, prediction: 0.1 },
+    medium: { speed: 0.6, prediction: 0.3 },
+    hard: { speed: 1.0, prediction: 0.5 },
+  };
+
+  // AI Movement logic
+  const updateAI = useCallback(() => {
+    if (!ballRef.current || !paddle2Ref.current || isTwoPlayer) return;
+
+    const { speed: aiSpeed, prediction } = AI_DIFFICULTY[aiDifficulty];
+    const ballFutureZ =
+      ballRef.current.position.z + ballVelocity.current.z * prediction * 10;
+    const targetZ = THREE.MathUtils.clamp(
+      ballFutureZ,
+      -TABLE_SIZE.z / 2 + PADDLE_SIZE.z / 2,
+      TABLE_SIZE.z / 2 - PADDLE_SIZE.z / 2
+    );
+
+    paddle2Ref.current.position.z +=
+      (targetZ - paddle2Ref.current.position.z) * aiSpeed;
+  }, [isTwoPlayer, aiDifficulty]);
+
+  // Add these animations in updateGame
+  const animateGameElements = () => {
+    setPaddle1Scale(THREE.MathUtils.lerp(paddle1Scale, 1, 0.1));
+    setPaddle2Scale(THREE.MathUtils.lerp(paddle2Scale, 1, 0.1));
+    setScoreScale(THREE.MathUtils.lerp(scoreScale, 1, 0.1));
+  };
 
   const playBounceSound = () => {
     if (!audioContextRef.current) {
@@ -80,6 +117,9 @@ const PongGame: React.FC = () => {
     )
       return;
 
+    updateAI();
+    animateGameElements();
+
     // Ball movement
     ballRef.current.position.add(ballVelocity.current);
 
@@ -113,6 +153,7 @@ const PongGame: React.FC = () => {
       Math.abs(ballPos.z - paddle1Pos.z) < PADDLE_SIZE.z / 2 + BALL_SIZE
     ) {
       handlePaddleCollision(paddle1Pos, 1);
+      setPaddle1Scale(1.2);
     }
 
     if (
@@ -120,6 +161,7 @@ const PongGame: React.FC = () => {
       Math.abs(ballPos.z - paddle2Pos.z) < PADDLE_SIZE.z / 2 + BALL_SIZE
     ) {
       handlePaddleCollision(paddle2Pos, -1);
+      setPaddle2Scale(1.4);
     }
 
     // Score points
@@ -183,7 +225,6 @@ const PongGame: React.FC = () => {
       <Canvas camera={{ position: [0, 40, 40], fov: 50 }}>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
-
         {/* Table */}
         <mesh position={[0, -1, 0]}>
           <boxGeometry args={[TABLE_SIZE.x, TABLE_SIZE.y, TABLE_SIZE.z]} />
@@ -198,7 +239,6 @@ const PongGame: React.FC = () => {
             <lineBasicMaterial attach="material" color="white" />
           </lineSegments>
         </mesh>
-
         {/* Paddles */}
         <mesh ref={paddle1Ref} position={[-TABLE_SIZE.x / 2 + 0.5, 0.6, 0]}>
           <boxGeometry args={[PADDLE_SIZE.x, PADDLE_SIZE.y, PADDLE_SIZE.z]} />
@@ -234,24 +274,30 @@ const PongGame: React.FC = () => {
             <lineBasicMaterial attach="material" color="white" />
           </lineSegments>
         </mesh>
-
-        {/* Ball */}
         <mesh ref={ballRef} position={[0, BALL_SIZE, 0]}>
           <sphereGeometry args={[BALL_SIZE, 32, 32]} />
-          <meshPhongMaterial color="white" />
+          <meshStandardMaterial color="white" />
         </mesh>
-
         {/* Score displays */}
-        <Text position={[-8, 16, 0]} fontSize={8} color="white">
+        <Text
+          position={[-8, 16, 0]}
+          fontSize={8}
+          color="white"
+          scale={scoreScale}
+        >
           {score1}
         </Text>
         <Text position={[0, 16, 0]} fontSize={8} color="white">
           -
         </Text>
-        <Text position={[8, 16, 0]} fontSize={8} color="white">
+        <Text
+          position={[8, 16, 0]}
+          fontSize={8}
+          color="white"
+          scale={scoreScale}
+        >
           {score2}
         </Text>
-
         <OrbitControls enabled={false} />
       </Canvas>
 
@@ -273,6 +319,33 @@ const PongGame: React.FC = () => {
         >
           <FaRedo />
         </button>
+        <button
+          className="bg-gray-800 p-3 rounded flex items-center cursor-pointer"
+          onClick={() => setIsTwoPlayer(!isTwoPlayer)}
+        >
+          {isTwoPlayer ? '🤖 AI Mode' : '👥 2 Player'}
+        </button>
+        {!isTwoPlayer && (
+          <div className="relative group">
+            <select
+              className="bg-gray-800 p-3 rounded text-white appearance-none pr-8 transition-opacity duration-200 group-hover:opacity-100"
+              value={aiDifficulty}
+              onChange={(e) =>
+                setAIDifficulty(e.target.value as keyof typeof AI_DIFFICULTY)
+              }
+              disabled={isTwoPlayer}
+            >
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+            <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+              </svg>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Links moved to top right with icons */}

@@ -51,3 +51,9 @@ npm run dev
 - **Pause/Resume:** Click the pause/play button in the top center.
 - **Restart Game:** Click the restart button in the top center to reset scores and the ball position.
 - **View Scores:** Scores are displayed at the top of the game screen.
+
+## TODO
+
+- Animations not working
+- Improve colors
+- Improve UI
