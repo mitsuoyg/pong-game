@@ -12,6 +12,8 @@ A 3D Pong game built with React, TypeScript, and Three.js.
 - 🔄 Restart Game: Reset scores and start a new game anytime
 - 🎮 Keyboard Controls: Use W/S for Player 1 and Arrow Up/Down for Player 2
 - 📊 Score Tracking: Keep track of each player's score
+- 🤖 AI Mode: Play against the computer with adjustable difficulty levels
+- 🔊 Sound Effects: Enjoy sound effects for bounces and scoring
 
 ## Tech Stack
 
@@ -51,6 +53,7 @@ npm run dev
 - **Pause/Resume:** Click the pause/play button in the top center.
 - **Restart Game:** Click the restart button in the top center to reset scores and the ball position.
 - **View Scores:** Scores are displayed at the top of the game screen.
+- **AI Mode:** Toggle between 2 Player and AI Mode using the button in the top center. Adjust AI difficulty when in AI Mode.
 
 ## TODO
 
