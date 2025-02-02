@@ -18,7 +18,10 @@ const PongGame: React.FC = () => {
   const [score2, setScore2] = useState<number>(0);
   const [isPaused, setIsPaused] = useState<boolean>(true);
   const [keys, setKeys] = useState<{ [key: string]: boolean }>({});
-  const [isTwoPlayer, setIsTwoPlayer] = useState(true);
+  const [isTwoPlayer, setIsTwoPlayer] = useState(() => {
+    const savedIsTwoPlayer = localStorage.getItem('isTwoPlayer');
+    return savedIsTwoPlayer !== null ? JSON.parse(savedIsTwoPlayer) : true;
+  });
   const [aiDifficulty, setAIDifficulty] =
     useState<keyof typeof AI_DIFFICULTY>('medium');
   const paddle1Ref = useRef<PaddleRef>(null);
@@ -38,10 +41,15 @@ const PongGame: React.FC = () => {
   const PADDLE_SIZE = { x: 1, y: 1, z: 7 };
   const BALL_SIZE = 0.5;
   const AI_DIFFICULTY = {
-    easy: { speed: 0.2, prediction: 0.1 },
+    // easy: { speed: 0.2, prediction: 0.1 },
     medium: { speed: 0.6, prediction: 0.3 },
-    hard: { speed: 1.0, prediction: 0.5 },
+    // hard: { speed: 1.0, prediction: 0.5 },
   };
+
+  // Save isTwoPlayer to localStorage on change
+  useEffect(() => {
+    localStorage.setItem('isTwoPlayer', JSON.stringify(isTwoPlayer));
+  }, [isTwoPlayer]);
 
   // AI Movement logic
   const updateAI = useCallback(() => {
