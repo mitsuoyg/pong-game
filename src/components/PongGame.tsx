@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import * as THREE from 'three';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Text } from '@react-three/drei';
+import { FaPause, FaPlay, FaRedo, FaGithub } from 'react-icons/fa';
+import logo from '../assets/logo.png';
 
 interface PaddleRef extends THREE.Mesh {
   position: THREE.Vector3;
@@ -123,7 +125,7 @@ const PongGame: React.FC = () => {
   }, [updateGame]);
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
+    <div style={{ width: '100vw', height: '100vh', backgroundColor: '#000' }}>
       <Canvas camera={{ position: [0, 40, 40], fov: 50 }}>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
@@ -135,11 +137,11 @@ const PongGame: React.FC = () => {
         </mesh>
 
         {/* Paddles */}
-        <mesh ref={paddle1Ref} position={[-TABLE_SIZE.x / 2 + 1, 0, 0]}>
+        <mesh ref={paddle1Ref} position={[-TABLE_SIZE.x / 2 + 0.5, 0, 0]}>
           <boxGeometry args={[PADDLE_SIZE.x, PADDLE_SIZE.y, PADDLE_SIZE.z]} />
           <meshStandardMaterial color="white" />
         </mesh>
-        <mesh ref={paddle2Ref} position={[TABLE_SIZE.x / 2 - 1, 0, 0]}>
+        <mesh ref={paddle2Ref} position={[TABLE_SIZE.x / 2 - 0.5, 0, 0]}>
           <boxGeometry args={[PADDLE_SIZE.x, PADDLE_SIZE.y, PADDLE_SIZE.z]} />
           <meshStandardMaterial color="white" />
         </mesh>
@@ -162,40 +164,44 @@ const PongGame: React.FC = () => {
       </Canvas>
 
       {/* UI Overlay */}
-      <div style={{ position: 'absolute', top: 20, left: 20, color: 'white' }}>
-        <button onClick={() => setIsPaused(!isPaused)}>
-          {isPaused ? 'Resume' : 'Pause'}
+      <div className="absolute top-5 left-1/2 transform -translate-x-1/2 text-white flex space-x-4">
+        <button
+          className="bg-gray-800 p-3 rounded flex items-center cursor-pointer"
+          onClick={() => setIsPaused(!isPaused)}
+        >
+          {isPaused ? <FaPlay /> : <FaPause />}
         </button>
         <button
+          className="bg-gray-800 p-3 rounded flex items-center cursor-pointer"
           onClick={() => {
             resetBall();
             setScore1(0);
             setScore2(0);
           }}
         >
-          Restart
+          <FaRedo />
         </button>
       </div>
 
-      {/* Links */}
-      <div
-        style={{ position: 'absolute', bottom: 20, right: 20, color: 'white' }}
-      >
+      {/* Links moved to top right with icons */}
+      <div className="absolute top-5 right-5 text-white flex space-x-4">
         <a
-          href="https://your-website.com"
+          href="https://mitsuo.vercel.app/"
           target="_blank"
           rel="noopener noreferrer"
-          style={{ color: 'white', display: 'block' }}
+          className="flex items-center"
+          style={{ color: 'white' }}
         >
-          Portfolio
+          <img src={logo} alt="Portfolio" className="w-6 h-6 mr-2" />
         </a>
         <a
-          href="https://github.com/your-username"
+          href="https://github.com/mitsuoyg/pong-game"
           target="_blank"
           rel="noopener noreferrer"
-          style={{ color: 'white', display: 'block' }}
+          className="flex items-center"
+          style={{ color: 'white' }}
         >
-          GitHub
+          <FaGithub className="w-6 h-6 mr-2" />
         </a>
       </div>
     </div>

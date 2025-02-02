@@ -1,21 +1,53 @@
-# React + TypeScript + Vite
+# Pong Game 3D
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![Live Demo](https://img.shields.io/badge/Live_Demo-000?style=for-the-badge)](https://mitsuo-pong-game.vercel.app/)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github)](https://github.com/mitsuoyg/pong-game)
 
-While this project uses React, Vite supports many popular JS frameworks. [See all the supported frameworks](https://vitejs.dev/guide/#scaffolding-your-first-vite-project).
+A 3D Pong game built with React, TypeScript, and Three.js.
 
-## Deploy Your Own
+## Features
 
-Deploy your own Vite project with Vercel.
+- 🏓 3D Graphics: Experience a visually appealing game environment
+- ⏸️ Pause and Resume: Control the game flow with ease
+- 🔄 Restart Game: Reset scores and start a new game anytime
+- 🎮 Keyboard Controls: Use W/S for Player 1 and Arrow Up/Down for Player 2
+- 📊 Score Tracking: Keep track of each player's score
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/vercel/tree/main/examples/vite-react&template=vite-react)
+## Tech Stack
 
-_Live Example: https://vite-react-example.vercel.app_
+**Frontend:**
 
-### Deploying From Your Terminal
+- React.js + TypeScript
+- Three.js + @react-three/fiber
+- Tailwind CSS
 
-You can deploy your new Vite project with a single command from your terminal using [Vercel CLI](https://vercel.com/download):
+**Icons:**
 
-```shell
-$ vercel
+- React Icons (FontAwesome)
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/mitsuoyg/pong-game
 ```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Start the development server:
+
+```bash
+npm run dev
+```
+
+## Usage
+
+- **Move Paddles:** Player 1 uses W/S keys, Player 2 uses Arrow Up/Down keys.
+- **Pause/Resume:** Click the pause/play button in the top center.
+- **Restart Game:** Click the restart button in the top center to reset scores and the ball position.
+- **View Scores:** Scores are displayed at the top of the game screen.
